@@ -64,7 +64,15 @@ class PlanningController extends Controller
     {
         $plannings = Planning::with('slots')
             ->latest()
-            ->paginate(15);
+            ->paginate(15)
+            ->through(fn (Planning $planning) => [
+                'planning_id' => $planning->id,
+                'request_code' => $planning->request_code,
+                'status' => $planning->status,
+                'created_at' => $planning->created_at,
+                'original_total' => $planning->originalTotal(),
+                'balanced_total' => $planning->balancedTotal(),
+            ]);
 
         return response()->json($plannings);
     }
